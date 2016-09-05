@@ -1,6 +1,7 @@
 var qcloud = require('qcloud_cos');
 var glob = require('glob');
 var async = require('async');
+var path = require('path');
 var fs = require('fs');
 
 var Exports = function(options){
@@ -10,22 +11,26 @@ var Exports = function(options){
 	qcloud.auth.signMore(options.bucket, expired);
 	
 
-	this.root = options.root;
+	this.root = options.remotePath;
 	this.bucket = options.bucket;
 	this._cos = qcloud.cos;
 };
 
-Exports.prototype.sync = function(path, callback){
+Exports.prototype.sync = function(filePath, callback){
 	var _this = this;
 
-	glob("**/*", {
+	glob('**/*', {
+		cwd:filePath,
 		ignore:['**/node_modules/**']
 	}, function (err, files) {
+		// 遍历文件出错
 		if(err) {
 			callback(err);
 			return;
 		}
-		console.log('ready to create root folder');
+
+		console.log('ready to create root folder:' + _this.root);
+
 		qcloud.cos.createFolder(_this.bucket, _this.root, '', function(data){
 			if(data){
 				var successCode = [0, -178];
@@ -36,33 +41,43 @@ Exports.prototype.sync = function(path, callback){
 					return;
 				}
 			}
+
 			console.log('create root folder successed');
+
 			async.mapSeries(files, function(file, callback){
-				var stat = fs.statSync(file);
+				var localPath = path.join(filePath, file);
+				var remotePath = _this.root + file ;
+				var stat = fs.statSync(localPath);
+
+				process.stdout.write(localPath + ' --> ' + remotePath + ' ');
+
 				if(stat.isFile()){
-					console.log(_this.root + file + ', is file, upload');
-					qcloud.cos.upload(file, _this.bucket, _this.root + file, '', 0, function(data){
+					process.stdout.write('uploading...');
+
+					qcloud.cos.upload(localPath, _this.bucket, remotePath, '', 0, function(data){
 						var err;
 						// 成功，目录已存在
 						var successCode = [0, -4018, -177];
 						if(successCode.indexOf(data.code) === -1){
 							err = new Error('code:' + data.code + ', message:' + data.message);
-							console.log('failed',err);
+							process.stdout.write('failed\n');
+							console.log(err);
 						}else{
-							console.log('successed',err);
+							process.stdout.write('ok\n');
 						}
 						callback(err);
 					});
 				}else if(stat.isDirectory()){
-					console.log(_this.root + file + ', is directory, create');
+					process.stdout.write('creating...');
 					qcloud.cos.createFolder(_this.bucket, _this.root + file, '', function(data){
 						var err;
 						var successCode = [0, -178];
 						if(successCode.indexOf(data.code) === -1){
 							err = new Error('code:' + data.code + ', message:' + data.message);
-							console.log('failed',err);
+							process.stdout.write('failed\n');
+							console.log(err);
 						}else{
-							console.log('successed',err);
+							process.stdout.write('ok\n');
 						}
 						callback(err);
 					});
@@ -75,13 +90,3 @@ Exports.prototype.sync = function(path, callback){
 
 
 module.exports = Exports;
-
-
-
-/*qcloud.cos.list('bug', '/', 20, 'eListBoth', 0, '', function(ret) {
-	console.log(JSON.stringify(ret));
-});
-
-qcloud.cos.upload('demo2.jpeg', 'bug', '/下载.jpeg', '', 1, function(){
-	console.log(JSON.stringify(arguments));
-});*/

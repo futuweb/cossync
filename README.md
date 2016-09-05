@@ -17,9 +17,12 @@ npm install -g cossync
 	"secretKey":"abcdabcdabcd",
 	"expired":1800,
 	"bucket":"bucketName",
-	"root":"/test/"
+	"remotePath":"/test/",
+	"localPath":"./"
 }
 ```
+
+其中`remotePath`为COS存储根目录，`localPath`为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。
 
 ## 使用
 

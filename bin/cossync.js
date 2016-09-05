@@ -32,7 +32,7 @@ if(!conf){
 var Cos = require('../index');
 var cos = new Cos(conf);
 
-cos.sync('./', function(err){
+cos.sync(conf.localPath, function(err){
 	if(err){
 		console.log('error!', err);
 	}else{
