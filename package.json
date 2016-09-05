@@ -1,0 +1,35 @@
+{
+  "name": "cossync",
+  "version": "1.0.1",
+  "description": "sync files with qcloud COS (cloud storage)",
+  "main": "index.js",
+  "bin":{
+    "cossync": "./bin/cossync.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TooBug/cossync.git"
+  },
+  "keywords": [
+    "qcloud",
+    "cos",
+    "sync",
+    "file",
+    "cloud",
+    "storage"
+  ],
+  "author": "TooBug",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TooBug/cossync/issues"
+  },
+  "homepage": "https://github.com/TooBug/cossync#readme",
+  "dependencies": {
+    "async": "^2.0.1",
+    "glob": "^7.0.6",
+    "qcloud_cos": "^1.0.5"
+  }
+}
