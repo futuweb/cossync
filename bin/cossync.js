@@ -16,7 +16,7 @@ tryPaths.forEach(function(tryPath){
 	if(!conf){
 		try{
 			conf = require(tryPath);
-			console.log('using config file: ' + tryPath);
+			console.log('[CLI   ]using config file: ' + tryPath);
 		}catch(e){
 
 		}
@@ -25,17 +25,17 @@ tryPaths.forEach(function(tryPath){
 });
 
 if(!conf){
-	console.log('No conf file found. Please specify a conf file or make a `cossyncconf.json` in current directory.');
+	console.log('[CLI   ]No conf file found. Please specify a conf file or make a `cossyncconf.json` in current directory.');
 	return;
 }
 
 var Cos = require('../index');
 var cos = new Cos(conf);
 
-cos.sync(conf.localPath, function(err){
+cos.sync(conf.localPath, conf.mime, conf.cacheMaxAge || 0, function(err){
 	if(err){
-		console.log('error!', err);
+		console.log('[CLI   ]error!', err);
 	}else{
-		console.log('finished!');
+		console.log('[CLI   ]finished!');
 	}
 });

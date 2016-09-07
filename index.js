@@ -3,9 +3,9 @@ var glob = require('glob');
 var async = require('async');
 var path = require('path');
 var fs = require('fs');
+var mime = require('mime');
 
 var Exports = function(options){
-	// qcloud.conf.setAppInfo('10001549','AKIDRy6CUyjteb2hB3QSGltPIW0g8bV5RHc1','u9PNlkfuVLZW2r5mUDBrQyvhtxWaOl0t'); 
 	qcloud.conf.setAppInfo(options.appId, options.secretId, options.secretKey); 
 	var expired = parseInt(Date.now() / 1000) + options.expired;
 	qcloud.auth.signMore(options.bucket, expired);
@@ -16,7 +16,7 @@ var Exports = function(options){
 	this._cos = qcloud.cos;
 };
 
-Exports.prototype.sync = function(filePath, callback){
+Exports.prototype.sync = function(filePath, mimeConf, maxAge, callback){
 	var _this = this;
 
 	glob('**/*', {
@@ -29,7 +29,7 @@ Exports.prototype.sync = function(filePath, callback){
 			return;
 		}
 
-		console.log('ready to create root folder:' + _this.root);
+		console.log('[Main  ]ready to create root folder:' + _this.root);
 
 		qcloud.cos.createFolder(_this.bucket, _this.root, '', function(data){
 			if(data){
@@ -42,17 +42,15 @@ Exports.prototype.sync = function(filePath, callback){
 				}
 			}
 
-			console.log('create root folder successed');
+			console.log('[Main  ]create root folder successed');
 
 			async.mapSeries(files, function(file, callback){
 				var localPath = path.join(filePath, file);
 				var remotePath = _this.root + file ;
 				var stat = fs.statSync(localPath);
 
-				process.stdout.write(localPath + ' --> ' + remotePath + ' ');
-
 				if(stat.isFile()){
-					process.stdout.write('uploading...');
+					process.stdout.write('[Upload]' + localPath + ' --> ' + remotePath + ' ');
 
 					qcloud.cos.upload(localPath, _this.bucket, remotePath, '', 0, function(data){
 						var err;
@@ -60,24 +58,68 @@ Exports.prototype.sync = function(filePath, callback){
 						var successCode = [0, -4018, -177];
 						if(successCode.indexOf(data.code) === -1){
 							err = new Error('code:' + data.code + ', message:' + data.message);
-							process.stdout.write('failed\n');
+							process.stdout.write('failed.\n');
 							console.log(err);
+							callback(err);
 						}else{
-							process.stdout.write('ok\n');
+							process.stdout.write('ok.\n');
+
+							// 设置MIME
+							if(mimeConf){
+								var thisMime = '';
+								var thisExt = path.extname(remotePath);
+								// 优先查找自定义设置
+								for(var ext in mimeConf){
+									if(thisExt === ext){
+										thisMime = mimeConf[ext];
+									}
+								}
+								// 如果没有自定义的，且开启默认MIME匹配的
+								if(!thisMime && mimeConf.default){
+									thisMime = mime.lookup(remotePath);
+									if(thisMime){
+										process.stdout.write('[MIME  ]' + thisMime + ' from default.');
+									}
+								}else{
+									process.stdout.write('[MIME  ]' + thisMime + ' from config.');
+								}
+								if(!thisMime){
+									thisMime = 'application/octet-stream';
+									process.stdout.write('[MIME  ]' + thisMime + ' from fallback.');
+								}
+								// 设置headers
+								qcloud.cos.updateFile(_this.bucket, remotePath, '', '',	{
+									'Cache-Control': 'max-age=' + maxAge,
+									'Content-Type' : thisMime,
+									'Content-Disposition' : 'filename="' + path.basename(remotePath) + '"'
+								}, function(data){
+									if(+data.code === 0){
+										process.stdout.write('ok.\n');
+										callback(null);
+									}else{
+										var err = new Error('code:' + data.code + ', message:' + data.message);
+										process.stdout.write('failed.\n');
+										conosle.log(err);
+										callback(err);
+									}
+								});
+							}else{
+								callback(null);
+							}
 						}
-						callback(err);
+						// callback(err);
 					});
 				}else if(stat.isDirectory()){
-					process.stdout.write('creating...');
+					process.stdout.write('[Folder]' + localPath + ' --> ' + remotePath + ' ');
 					qcloud.cos.createFolder(_this.bucket, _this.root + file, '', function(data){
 						var err;
 						var successCode = [0, -178];
 						if(successCode.indexOf(data.code) === -1){
 							err = new Error('code:' + data.code + ', message:' + data.message);
-							process.stdout.write('failed\n');
+							process.stdout.write('failed.\n');
 							console.log(err);
 						}else{
-							process.stdout.write('ok\n');
+							process.stdout.write('ok.\n');
 						}
 						callback(err);
 					});
