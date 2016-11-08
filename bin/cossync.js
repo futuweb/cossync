@@ -35,6 +35,7 @@ var cos = new Cos(conf);
 cos.sync(conf.localPath, conf.mime, conf.cacheMaxAge || 0, function(err){
 	if(err){
 		console.log('[CLI   ]error!', err);
+		process.exit(1);
 	}else{
 		console.log('[CLI   ]finished!');
 	}
