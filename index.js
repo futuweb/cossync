@@ -6,10 +6,10 @@ var fs = require('fs');
 var mime = require('mime');
 
 var Exports = function(options){
-	qcloud.conf.setAppInfo(options.appId, options.secretId, options.secretKey); 
+	qcloud.conf.setAppInfo(options.appId, options.secretId, options.secretKey);
 	var expired = parseInt(Date.now() / 1000) + options.expired;
 	qcloud.auth.signMore(options.bucket, expired);
-	
+
 
 	this.root = options.remotePath;
 	this.bucket = options.bucket;
@@ -36,7 +36,7 @@ Exports.prototype.sync = function(filePath, mimeConf, maxAge, callback){
 				var successCode = [0, -178];
 				if(successCode.indexOf(data.code) === -1){
 					var err = new Error('code:' + data.code + ', message:' + data.message);
-					console.log('create root folder failed', err);
+					console.log('[Main  ]create root folder failed');
 					callback(err);
 					return;
 				}

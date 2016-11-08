@@ -11,6 +11,8 @@ var tryPaths = [localPath, confPath];
 
 var conf;
 
+console.log('\n\n------------------- CosSync v'+require('../package.json').version+' --------------------');
+
 tryPaths.forEach(function(tryPath){
 
 	if(!conf){
@@ -32,11 +34,25 @@ if(!conf){
 var Cos = require('../index');
 var cos = new Cos(conf);
 
-cos.sync(conf.localPath, conf.mime, conf.cacheMaxAge || 0, function(err){
-	if(err){
-		console.log('[CLI   ]error!', err);
-		process.exit(1);
-	}else{
-		console.log('[CLI   ]finished!');
-	}
-});
+var tryTimes = 3;
+
+var doSync = function(){
+	cos.sync(conf.localPath, conf.mime, conf.cacheMaxAge || 0, function(err){
+		if(err){
+			console.log('[CLI   ]error!', err);
+			if(--tryTimes){
+				console.log('[CLI   ]ready to do #' + (3 - tryTimes) + ' retry afert 1s.');
+				setTimeout(doSync, 1000);
+			}else{
+				console.log('[CLI   ]Still error, abort!');
+				console.log('------------------- CosSync v'+require('../package.json').version+' --------------------\n\n');
+				process.exit(1);
+			}
+		}else{
+			console.log('[CLI   ]finished!');
+			console.log('------------------- CosSync v'+require('../package.json').version+' --------------------\n\n');
+		}
+	});
+};
+
+doSync();
