@@ -20,6 +20,9 @@ npm install -g cossync
 	"remotePath":"/test/",
 	"localPath":"./",
 	"cacheMaxAge":31536000,
+	"strict":true , //单个文件报错是否停止上传 true or false  default : true
+	"timeout": 30,//连接超时时间 s
+	"progress": function(total , current , failLen , file , success){},//上传进度
 	"mime":{
 		"default": true,
 		".test": "text/plain"
@@ -40,6 +43,13 @@ cossync conf.json
 ```
 
 ## 历史
+
+### 1.3.0 2016-12-20
+
+- 增加上传进度
+- 增加连接超时设置
+- 增加单个文件报错是否停止上传
+- 兼容浏览器日志打印，完善日志打印
 
 ### 1.2.0 2016-11-08
 

@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
+'use strict';
+
 var path = require('path');
-var fs = require('fs');
+// var fs = require('fs');
 var confPath = process.argv[2];
 if(!confPath){
 	confPath = 'cossyncconf.json';
@@ -31,8 +33,8 @@ if(!conf){
 	return;
 }
 
-var Cos = require('../index');
-var cos = new Cos(conf);
+var Cossync = require('../index');
+var cos = new Cossync(conf);
 
 var tryTimes = 3;
 
