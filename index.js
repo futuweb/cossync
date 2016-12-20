@@ -13,13 +13,15 @@ var Log = logMsg();
  * @return {[type]} [description]
  */
 function logMsg(){
-    var log = process.stdout.write;
-    if ( typeof window !== undefined && global === window ) {
-        log = console.log;
-    }
-    return function(msg){
-        log(msg);
-    };
+    var node_env = true;
+    try{
+        if ( typeof window !== undefined && global === window ) {
+            node_env = false;
+        }
+    }catch(e){}
+    return node_env ? function(msg){
+        process.stdout.write(msg);
+    } : function(msg){ console.log(msg);};
 }
 /**
  * [Cossync description]
@@ -56,7 +58,7 @@ function Cossync(options){
  * @return {[type]}         [description]
  */
 function emptyProgress(total , current , fail , file , success){
-    Log('upload progress '+((current/total)*100).toFixed(2)+'% ('+fail+' files fail). the file :  '+file +' is upload '+(success ? 'success' : 'fail')+'.');
+    Log('upload progress '+((current/total)*100).toFixed(2)+'% ('+fail+' files fail). the file :  '+file +' is upload '+(success ? 'success' : 'fail')+'.\n');
 }
 /**
  * [sync 上传文件]
@@ -77,19 +79,19 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
         }
         var allFilesLen = files.length , currentIndex = 0 , failLen = 0;
 
-        Log('[Main  ]ready to create root folder:' + _this.root);
+        Log('[Main  ]ready to create root folder:' + _this.root+'.\n');
         qcloud.cos.createFolder(_this.bucket, _this.root, '', function(data){
             if(data){
                 var successCode = [0, -178];
                 if(successCode.indexOf(data.code) === -1){
                     var err = new Error('code:' + data.code + ', message:' + data.message);
-                    Log('[Main  ]create root folder failed');
+                    Log('[Main  ]create root folder failed.\n');
                     callback(err ,data);
                     return;
                 }
             }
 
-            Log('[Main  ]create root folder successed');
+            Log('[Main  ]create root folder successed.\n');
 
             async.mapSeries(files, function(file, callback){
                 var localPath = path.join(filePath, file) ,
@@ -98,7 +100,7 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
 
                 currentIndex++;
                 if(stat.isFile()){
-                    Log('[Upload]' + localPath + ' --> ' + remotePath + ' ');
+                    Log('[Upload]' + localPath + ' --> ' + remotePath + '.\n');
                     qcloud.cos.upload(localPath, _this.bucket, remotePath, '', 0, function(data){
                         var err;
                         // 成功，目录已存在

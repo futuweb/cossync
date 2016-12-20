@@ -21,7 +21,7 @@ npm install -g cossync
 	"localPath":"./",
 	"cacheMaxAge":31536000,
 	"strict":true , //单个文件报错是否停止上传 true or false  default : true
-	"timeout": 30,//连接超时时间 s
+	"timeout":30,//连接超时时间 s
 	"progress": function(total , current , failLen , file , success){},//上传进度
 	"mime":{
 		"default": true,
