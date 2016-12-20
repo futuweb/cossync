@@ -110,7 +110,7 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
                             Log('upload failed.\n');
                             Log(err);
                             failLen++;
-                             _this.progress.call(_this , allFilesLen , currentIndex , failLen , file , false);
+                             _this.progress(allFilesLen , currentIndex , failLen , file , false);
                             callback(_this.strict ? err : null , data);
                         }else{
                             Log('upload ok.\n');
@@ -129,14 +129,14 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
                                 if(!thisMime && mimeConf.default){
                                     thisMime = mime.lookup(remotePath);
                                     if(thisMime){
-                                        Log('[MIME  ]' + thisMime + ' from default.');
+                                        Log('[MIME  ]' + thisMime + ' from default.\n');
                                     }
                                 }else{
-                                    Log('[MIME  ]' + thisMime + ' from config.');
+                                    Log('[MIME  ]' + thisMime + ' from config.\n');
                                 }
                                 if(!thisMime){
                                     thisMime = 'application/octet-stream';
-                                    Log('[MIME  ]' + thisMime + ' from fallback.');
+                                    Log('[MIME  ]' + thisMime + ' from fallback.\n');
                                 }
                                 // 设置headers
                                 qcloud.cos.updateFile(_this.bucket, remotePath, '', '', {
@@ -146,19 +146,19 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
                                 }, function(data){
                                     if(+data.code === 0){
                                         Log('update file mime ok.\n');
-                                        _this.progress.call(_this , allFilesLen , currentIndex , failLen , file , true);
+                                        _this.progress(allFilesLen , currentIndex , failLen , file , true);
                                         callback(null , data);
                                     }else{
                                         var err = new Error('code:' + data.code + ', message:' + data.message);
                                         Log('update file mime failed.\n');
                                         Log(err);
                                         failLen++;
-                                        _this.progress.call(_this , allFilesLen , currentIndex , failLen, file , false);
+                                        _this.progress(allFilesLen , currentIndex , failLen, file , false);
                                         callback(_this.strict ? err : null , data);
                                     }
                                 });
                             }else{
-                                _this.progress.call(_this , allFilesLen , currentIndex , failLen, file , true);
+                                _this.progress(allFilesLen , currentIndex , failLen, file , true);
                                 callback(null , data);
                             }
                         }
@@ -176,7 +176,7 @@ Cossync.prototype.sync = function(filePath, mimeConf, maxAge, callback){
                         }else{
                             Log('create folder ok.\n');
                         }
-                        _this.progress.call(_this , allFilesLen , currentIndex , failLen, file , true);
+                        _this.progress(allFilesLen , currentIndex , failLen, file , true);
                         callback(_this.strict ? err : null , data);
                     });
                 }
