@@ -1,6 +1,6 @@
 {
   "name": "cossync",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "sync files with qcloud COS (cloud storage)",
   "main": "index.js",
   "bin":{
@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/TooBug/cossync#readme",
   "dependencies": {
-    "async": "^2.0.1",
     "glob": "^7.0.6",
     "qcloud_cos": "^1.0.5"
   }

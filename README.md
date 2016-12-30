@@ -12,39 +12,72 @@ npm install -g cossync
 
 ```json
 {
-	"appId":"100012345",
-	"secretId":"ABCDABCDABCDABCDABCDABCD",
-	"secretKey":"abcdabcdabcd",
-	"expired":1800,
-	"bucket":"bucketName",
-	"remotePath":"/test/",
-	"localPath":"./",
-	"cacheMaxAge":31536000,
-	"strict":true , //单个文件报错是否停止上传 true or false  default : true
-	"timeout":30,//连接超时时间 s
-	"progress": function(total , current , failLen , file , success){},//上传进度
-	"mime":{
-		"default": true,
-		".test": "text/plain"
-	}
+    "appId":"100012345",
+    "secretId":"ABCDABCDABCDABCDABCDABCD",
+    "secretKey":"abcdabcdabcd",
+    "expired":1800,
+    "bucket":"bucketName",
+    "remotePath":"/test/",
+    "localPath":"./",
+    "cacheMaxAge":31536000,
+    "strict":true , 
+    "timeout":30,
+    "mime":{
+        "default": true,
+        ".test": "text/plain"
+    }
 }
 ```
 
-`remotePath`为COS存储根目录，`localPath`为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。
+## params
 
-`cacheMaxAge`会设置`cache-control`头为指定的`max-age`值。
+* `remotePath` 为COS存储根目录，
+* `strict` 单个文件报错是否停止上传 true or false  default : true
+* `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。
+* `remotePath` 腾讯cos目录
+* `cacheMaxAge` 会设置`cache-control`头为指定的`max-age`值。
+* `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
+* `timeout` 连接超时时间 s
+* `progress` 查看上传进度函数
+* `showLog` 打印日志，浏览器下默认不打印
 
-`mime`中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
-
-## 使用
+## CMD使用模式
 
 ```sh
 cossync conf.json
 ```
 
+## require模式
+
+```js
+ 'use strict';
+
+ var Cossync = require('cossync');
+
+ var cos = new Cossync({
+     "appId":"100012345",
+    "secretId":"ABCDABCDABCDABCDABCDABCD",
+    "secretKey":"abcdabcdabcd",
+    "expired":1800,
+    "bucket":"bug",
+    "cacheMaxAge":60,
+    "timeout":100,
+    "strict":true,
+    "remotePath":"/test/",
+    "progress" : function(countConf){} 
+ });
+//cos.async === cos.sync
+ cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} , 60 , function(err , result){
+    console.log(err , result);
+ });
+
+ //默认关闭浏览器日志打印
+Cossync.setWindowsLog(false);
+```
+
 ## 历史
 
-### 1.3.0 2016-12-20
+### 2.0.0 2016-12-30
 
 - 增加上传进度
 - 增加连接超时设置
