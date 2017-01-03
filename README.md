@@ -52,7 +52,7 @@ npm install --save cossync
 ## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) 
 
 ##cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
-`async`和`async`都是上传文件对外接口。接口完全相同。
+`sync`和`async`都是上传文件对外接口。接口完全相同。
 
 *  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 本地上传的文件目录 必须存在
 *  `mimeConf` [\<Object\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 后缀名 可选
