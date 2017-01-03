@@ -197,9 +197,9 @@ function getFilePathStats(pt){
  * @param  {[type]} that       [cos对象]
  * @param  {[type]} mimeConf   [文件类型]
  * @param  {[type]} maxAge     [缓存有效期]
- * @param  {[type]} files     [需要上传的文件数组]
- * @param  {[type]} count     [初始文件总数]
- * @return {[type]}           [description]
+ * @param  {[type]} files      [需要上传的文件数组]
+ * @param  {[type]} countConf  [初始文件总数]
+ * @return {[Promise]}            [description]
  */
 function traverse(params , that , files , countConf){
     var file = files.shift();
@@ -241,7 +241,7 @@ function traverse(params , that , files , countConf){
  * @param  {Function} callback [回调]
  * @return {[this]}            [description]
  */
-Cossync.prototype.sync = Cossync.prototype.async = function(localPath, mimeConf, maxAge, callback){
+Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
     var argv = Array.prototype.slice.call(arguments) , empty = function(){};
     if ( typeof localPath !== 'string' ) { 
         return this;

@@ -49,10 +49,8 @@ npm install --save cossync
 * `timeout` 连接超时时间 s
 * `progress` 查看上传进度函数，可自己配置，挂载在`Cossync`实例上。
 
-## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) 
-
 ##cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
-`sync`和`async`都是上传文件对外接口。接口完全相同。
+上传文件对外接口。
 
 *  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 本地上传的文件目录 必须存在
 *  `mimeConf` [\<Object\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 后缀名 可选
@@ -113,7 +111,6 @@ cossync conf.json
     "remotePath":"/test/",
     "progress" : function(countConf){} 
  });
-//cos.async === cos.sync
  cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} , 60 , function(err , result){
     console.log(err , result);
  });
