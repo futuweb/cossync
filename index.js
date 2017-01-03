@@ -201,8 +201,8 @@ function traverse(params , that , files , countConf){
     var filePath = path.normalize(path.join(params.localPath , file)), 
         remotePath = that.root + file;
     function catchError(error){
+        countConf.fail++;
         if ( !that.strict ) {
-            countConf.fail++;
             countConf.success--;
             return Promise.resolve(true);
         }
@@ -213,10 +213,10 @@ function traverse(params , that , files , countConf){
             //上传
             return uploadFile(filePath , that.bucket , remotePath).then(function(){
                 //更新
-                return updateFile(that.bucket , remotePath , params.mimeConf , params.maxAge).catch(catchError);
+                return updateFile(that.bucket , remotePath , params.mimeConf , params.maxAge)['catch'](catchError);
             },catchError);
         }else if ( stats.isDirectory() ){ //目录
-            return createFolder(that.bucket , that.root , file).catch(catchError);
+            return createFolder(that.bucket , that.root , file)['catch'](catchError);
         }
     }).then(function(){
         countConf.success++;
@@ -247,7 +247,8 @@ Cossync.prototype.sync = Cossync.prototype.async = function(localPath, mimeConf,
             Log('[Main ] use strict mode : ' + that.strict+'\n');
             return traverse(params , that , [].concat(values[0]) , countConf);
         }else{
-            throw createError('[Main ] local folder is empty.\n');
+            Log('[Main ] local folder is empty.\n');
+            return Promise.resolve(countConf);
         }
     }).then(function(count){
         Log('[Main ] total:' + count.total + ' success: ' + count.success +' fail: '+count.fail+'\n');
