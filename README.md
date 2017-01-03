@@ -42,15 +42,17 @@ npm install --save cossync
 * `remotePath` 为COS存储根目录，
 * `expired`  密钥有效期
 * `strict` 单个文件报错是否停止上传 true or false  default : true
-* `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。
+* `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。仅`cmd`模式有效。
 * `remotePath` 腾讯cos目录
 * `maxAge` 会设置`cache-control`头为指定的`max-age`值。
 * `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
 * `timeout` 连接超时时间 s
 * `progress` 查看上传进度函数
 
-## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) || cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
-上传文件对外接口。
+## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) 
+
+##cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
+`async`和`async`都是上传文件对外接口。接口完全相同。
 
 *  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  必须存在
 *  `mimeConf` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  可选
