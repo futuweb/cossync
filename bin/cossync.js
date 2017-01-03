@@ -39,7 +39,7 @@ var cos = new Cossync(conf);
 var tryTimes = 3;
 
 var doSync = function(){
-	cos.sync(conf.localPath, conf.mime, conf.cacheMaxAge || 0, function(err){
+	cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, function(err){
 		if(err){
 			console.log('[CLI   ]error!', err);
 			if(--tryTimes){

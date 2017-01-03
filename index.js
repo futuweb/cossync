@@ -24,28 +24,33 @@ function logMsg(){
 }
 /**
  * [Cossync 接腾讯cos]
- * @param {[type]} options [description]
+ * @param {[type]} options [参数对象]
  *
  * remotePath : 仓库目录
  * bucket     : 仓库
+ * expired    : 密钥有效期
  * cos        : qcloud.cos
  * strict     : 单个文件报错是否停止上传 true or false  default : true
  * progress   : 上传进度 func
  * timeout    : 连接超时时间 s
  * expired    : 授权有效期 s
+ * mime       : 文件后缀名解析
+ * maxAge     : cache-control头为指定的max-age值
  */
 function Cossync(options){
     if ( !(this instanceof Cossync )) {
         return new Cossync(options);
     }
-    this.root = options.remotePath;
-    this.bucket = options.bucket;
-    this.cos = qcloud.cos;
-    this.strict = typeof options.strict === 'undefined' ? true : !!options.strict;
+    this.root      = options.remotePath;
+    this.bucket    = options.bucket;
+    this.cos       = qcloud.cos;
+    this.mime      = options.mime || {default: true};
+    this.maxAge    = options.maxAge || options.cacheMaxAge || 0;
+    this.strict    = typeof options.strict === 'undefined' ? true : !!options.strict;
     this.progress  = options.progress || emptyProgress;
     //设置参数
     qcloud.conf.setAppInfo(options.appId, options.secretId, options.secretKey , options.timeout);
-    //设置过期时间
+    //密钥有效期
     qcloud.auth.signMore(options.bucket, parseInt(Date.now() / 1000) + options.expired);
 }
 
@@ -237,6 +242,29 @@ function traverse(params , that , files , countConf){
  * @return {[this]}            [description]
  */
 Cossync.prototype.sync = Cossync.prototype.async = function(localPath, mimeConf, maxAge, callback){
+    var argv = Array.prototype.slice.call(arguments) , empty = function(){};
+    if ( typeof localPath !== 'string' ) { 
+        return this;
+    }
+    //参数转换
+    if ( argv.length === 2 && typeof mimeConf === 'function' ) {
+        callback = mimeConf;
+    }else if ( argv.length === 3 && typeof maxAge === 'function' ) {
+        callback = maxAge;
+        if ( typeof mimeConf === 'number' ) {
+            maxAge = mimeConf;
+        }
+    }
+    if ( typeof mimeConf !== 'object' ) {
+        mimeConf = this.mime;
+    }
+    if ( typeof maxAge !== 'number' ) {
+        maxAge = this.maxAge;
+    }
+    if ( typeof callback !== 'function' ) {
+        callback = empty;
+    }
+
     var params = {localPath:localPath , mimeConf:mimeConf , maxAge:maxAge} , 
         countConf = {total : 0 , success:0 , fail:0} , 
         files = [] , that = this;
@@ -254,6 +282,7 @@ Cossync.prototype.sync = Cossync.prototype.async = function(localPath, mimeConf,
         Log('[Main ] total:' + count.total + ' success: ' + count.success +' fail: '+count.fail+'\n');
         return callback(void 0 , {code:0 , files : files , localPath : localPath , remotePath:that.root , bucket : that.bucket , count:count});
     })['catch'](callback);
+
     return this;
 };
 //默认关闭浏览器日志打印

@@ -8,7 +8,7 @@ var cos = new Cossync({
     "secretKey":"你的secretKey",
     "expired":1800,
     "bucket":"你的仓库",
-    "cacheMaxAge":60,
+    "maxAge":60,
     "timeout":100,
     "strict":true,
     "remotePath":"你的腾讯cos目录",

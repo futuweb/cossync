@@ -2,8 +2,16 @@
 
 ## 安装
 
+cmd:
+
 ```sh
 npm install -g cossync
+```
+
+require:
+
+```sh
+npm install --save cossync
 ```
 
 ## 配置
@@ -19,7 +27,7 @@ npm install -g cossync
     "bucket":"bucketName",
     "remotePath":"/test/",
     "localPath":"./",
-    "cacheMaxAge":31536000,
+    "maxAge":31536000,
     "strict":true , 
     "timeout":30,
     "mime":{
@@ -32,13 +40,28 @@ npm install -g cossync
 ## params
 
 * `remotePath` 为COS存储根目录，
+* `expired`  密钥有效期
 * `strict` 单个文件报错是否停止上传 true or false  default : true
 * `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。
 * `remotePath` 腾讯cos目录
-* `cacheMaxAge` 会设置`cache-control`头为指定的`max-age`值。
+* `maxAge` 会设置`cache-control`头为指定的`max-age`值。
 * `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
 * `timeout` 连接超时时间 s
 * `progress` 查看上传进度函数
+
+## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) || cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
+上传文件对外接口。
+
+*  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  必须存在
+*  `mimeConf` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  可选
+*  `maxAge` [\<Number\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number)  可选
+*  `callback` [\<Function\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function)  可选
+
+## Cossync
+文件上传对象
+
+### Cossync.setWindowsLog(false|true)
+默认关闭浏览器日志打印.
 
 ## CMD使用模式
 
@@ -59,7 +82,7 @@ cossync conf.json
     "secretKey":"abcdabcdabcd",
     "expired":1800,
     "bucket":"bug",
-    "cacheMaxAge":60,
+    "maxAge":60,
     "timeout":100,
     "strict":true,
     "remotePath":"/test/",
@@ -69,9 +92,6 @@ cossync conf.json
  cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} , 60 , function(err , result){
     console.log(err , result);
  });
-
- //默认关闭浏览器日志打印
-Cossync.setWindowsLog(false);
 ```
 
 ## 历史
