@@ -39,7 +39,6 @@ npm install -g cossync
 * `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
 * `timeout` 连接超时时间 s
 * `progress` 查看上传进度函数
-* `showLog` 打印日志，浏览器下默认不打印
 
 ## CMD使用模式
 
