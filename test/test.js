@@ -14,6 +14,6 @@ var cos = new Cossync({
     "remotePath":"你的腾讯cos目录",
 });
 
-cos.async('E:/source/demo/' , {"default": true} , 60 , function(err , result){
+cos.async('E:/source/demo/' , function(err , result){
 	console.log(err , result);
 });

@@ -43,21 +43,44 @@ npm install --save cossync
 * `expired`  密钥有效期
 * `strict` 单个文件报错是否停止上传 true or false  default : true
 * `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。仅`cmd`模式有效。
-* `remotePath` 腾讯cos目录
+* `remotePath` 腾讯cos目录 , 以`/`开头和结尾 。例如：`/test/`.
 * `maxAge` 会设置`cache-control`头为指定的`max-age`值。
 * `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
 * `timeout` 连接超时时间 s
-* `progress` 查看上传进度函数
+* `progress` 查看上传进度函数，可自己配置，挂载在`Cossync`实例上。
 
 ## cos.async(localPath [,mimeConf [,maxAge[,callback]]]) 
 
 ##cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
 `async`和`async`都是上传文件对外接口。接口完全相同。
 
-*  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  必须存在
-*  `mimeConf` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String)  可选
-*  `maxAge` [\<Number\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number)  可选
-*  `callback` [\<Function\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function)  可选
+*  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 本地上传的文件目录 必须存在
+*  `mimeConf` [\<Object\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 后缀名 可选
+*  `maxAge` [\<Number\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number) 缓存有效期 可选
+*  `callback` [\<Function\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function) 回调函数 可选
+
+`callback(err,result)`，如果上传失败`result`参数为空，`err`为`Error`实例；成功，`err === undefined` ， `result`参数会返回相应的上传状态。
+
+`result`参数如下：
+
+```js
+   {   
+        code: 0,
+        files:
+        [ 'demo_001.html',
+          'demo_002.html',
+          'demo_003.html' 
+        ],
+        localPath: 'E:/source/2016_11/4/demo/',
+        remotePath: '/test/',
+        bucket: 'bug',
+        count: { 
+            total: 3, 
+            success: 3, 
+            fail: 0 
+        }
+   }
+```
 
 ## Cossync
 文件上传对象
