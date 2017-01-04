@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "sync files with qcloud COS (cloud storage)",
   "main": "index.js",
-  "bin":{
+  "bin": {
     "cossync": "./bin/cossync.js"
   },
   "scripts": {
@@ -29,6 +29,7 @@
   "homepage": "https://github.com/TooBug/cossync#readme",
   "dependencies": {
     "glob": "^7.0.6",
+    "mime": "^1.3.4",
     "qcloud_cos": "^1.0.5"
   }
 }
