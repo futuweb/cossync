@@ -281,7 +281,7 @@ Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
     }).then(function(count){
         Log('[Main ] total:' + count.total + ' success: ' + count.success +' fail: '+count.fail+'\n');
         return callback(void 0 , {code:0 , files : files , localPath : localPath , remotePath:that.root , bucket : that.bucket , count:count});
-    })['catch'](callback);
+    },callback);
 
     return this;
 };
