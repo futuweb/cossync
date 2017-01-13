@@ -1,26 +1,33 @@
 'use strict';
 
 var qcloud = require('qcloud_cos');
-var glob = require('glob');
-var path = require('path');
-var fs = require('fs');
-var mime = require('mime');
+var glob   = require('glob');
+var path   = require('path');
+var fs     = require('fs');
+var mime   = require('mime');
 
-var COS_BIND_NODE_ENV = true;
-var Log = logMsg();
+var log = getLog();
 /**
- * [logMsg 打印信息]
+ * [getLog 打印信息函数]
  * @return {[function]} [description]
  */
-function logMsg(){
-    try{
-        if ( typeof window !== undefined && global === window ) {
-            COS_BIND_NODE_ENV = false;
-        }
-    }catch(e){}
-    return COS_BIND_NODE_ENV ? function(msg){
+function getLog(){
+    return isNodeEnv() ? function(msg){
         process.stdout.write(msg);
     } : function(msg){ console.log(msg);};
+}
+/**
+ * [isNodeEnv 确定是Node环境吗？]
+ * @return {Boolean} [true : Node ]
+ */
+function isNodeEnv(){
+    var nodeEnv = true;
+    try{
+        if ( typeof window !== undefined && global === window ) {
+            nodeEnv = false;
+        }
+    }catch(e){}
+    return nodeEnv;
 }
 /**
  * [Cossync 接腾讯cos]
@@ -41,13 +48,16 @@ function Cossync(options){
     if ( !(this instanceof Cossync )) {
         return new Cossync(options);
     }
+    if ( !options.remotePath || !options.bucket ) {
+        return log('[Main   ] params remotePath &&  bucket is undefined.\n');
+    }
     this.root      = options.remotePath;
     this.bucket    = options.bucket;
     this.cos       = qcloud.cos;
     this.mime      = options.mime || {default: true};
     this.maxAge    = options.maxAge || options.cacheMaxAge || 0;
     this.strict    = typeof options.strict === 'undefined' ? true : !!options.strict;
-    this.progress  = options.progress || emptyProgress;
+    this.progress  = options.progress || defaultProgress;
     //设置参数
     qcloud.conf.setAppInfo(options.appId, options.secretId, options.secretKey , options.timeout);
     //密钥有效期
@@ -55,12 +65,12 @@ function Cossync(options){
 }
 
 /**
- * [setWindowsLog 设置关闭浏览器端的打印log]
+ * [setBrowserLog 设置关闭浏览器端的打印log]
  * @param {[type]} show [description]
  */
-Cossync.setWindowsLog = function(show){
-    if ( !COS_BIND_NODE_ENV ) {
-        Log = show ? logMsg() : function(){};
+Cossync.setBrowserLog = function(show){
+    if ( !isNodeEnv() ) {
+        log = show ? getLog() : function(){};
     }
 };
 
@@ -69,8 +79,8 @@ Cossync.setWindowsLog = function(show){
  * @param  {[type]} countConf [上传参数：total:总数 ，success:成功 , fail:失败]
  * @return {[type]}           [description]
  */
-function emptyProgress(countConf){
-    Log('[Main ] upload progress '+((countConf.success/countConf.total)*100).toFixed(2)+'%\n');
+function defaultProgress(countConf){
+    log('[Main   ] upload progress '+((countConf.success/countConf.total)*100).toFixed(2)+'%\n');
 }
 
 /**
@@ -96,7 +106,7 @@ function traverseAllFiles(filePath){
             if ( error ) {
                 return reject(createError(error));
             }else{
-                Log('[Main ] ready to create folder.\n');
+                log('[Main   ] ready to traverse all files by folder.\n');
                 return resolve(files);
             }
         });
@@ -106,13 +116,13 @@ function traverseAllFiles(filePath){
  * [createFolder 创建目录]
  * @return {[Promise]} [description]
  */
-function createFolder(bucket , rootRemote , floder){
+function createFolder(bucket , rootRemote , folder){
     return new Promise(function(resolve , reject){
-        qcloud.cos.createFolder(bucket , rootRemote+(floder ? +floder :'') , '' , function(result){
+        qcloud.cos.createFolder(bucket , rootRemote+(folder ? folder :'') , '' , function(result){
             if ( [0,-178].indexOf(result.code) === -1 ){
-                return reject(createError('[Function createFolder] throws error. code:' + result.code + ', message:' + result.message+'\n'));
+                return reject(createError('[create ] qcloud.cos createFolder failed. code:' + result.code + ', message:' + result.message+'\n'));
             }else{
-                Log('[Main ] create folder successed.\n');
+                log('[create ] qcloud.cos create folder successed. remote folder: '+(rootRemote+(folder ? folder :''))+'\n');
                 return resolve(result);
             }
         });
@@ -130,9 +140,9 @@ function uploadFile(filePath , bucket , remotePath){
     return new Promise(function(resolve , reject){
         qcloud.cos.upload(filePath, bucket, remotePath, '', 0, function(result){
             if( [0, -4018, -177].indexOf(result.code) === -1 ){
-                return reject(createError('[Function uploadFile] throws error. code:' + result.code + ', message:' + result.message+'\n'));
+                return reject(createError('[upload ] qcloud.cos upload file failed. code:' + result.code + ', message:' + result.message+'\n'));
             }else{
-                Log('upload: success. file: '+filePath+'\n');
+                log('[upload ] qcloud.cos upload success. file: '+filePath+'\n');
                 return resolve(result);
             }
         });
@@ -170,9 +180,9 @@ function updateFile(bucket , remotePath , mimeConf , maxAge){
             'Content-Disposition' : 'filename="' + path.basename(remotePath) + '"'
         }, function(result){
             if( +result.code !== 0 ){
-                return reject(createError('[Function updateFile] throws error. code:' + result.code + ', message:' + result.message+'\n'));
+                return reject(createError('[update ] qcloud.cos update error. code:' + result.code + ', message:' + result.message+'\n'));
             }else{
-                Log('update: success. remote file: '+remotePath+'\n');
+                log('[update ] qcloud.cos update file success. remote file: '+remotePath+'\n');
                 return resolve(result);
             }
         });
@@ -186,7 +196,7 @@ function updateFile(bucket , remotePath , mimeConf , maxAge){
 function getFilePathStats(pt){
     return new Promise((resolve , reject)=>{
         fs.stat(path.normalize(pt) , (err , stats)=>{
-            if ( err ) return reject(err);
+            if ( err ) return reject(createError('[status ] fs.stat() get path status failed. path:' + pt +'\n'));
             return resolve(stats);
         });
     });
@@ -223,7 +233,7 @@ function traverse(params , that , files , countConf){
         }else if ( stats.isDirectory() ){ //目录
             return createFolder(that.bucket , that.root , file)['catch'](catchError);
         }
-    }).then(function(){
+    },catchError).then(function(){
         countConf.success++;
         that.progress(countConf);
         if ( files.length <= 0 ) { //成功
@@ -246,6 +256,7 @@ Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
     if ( typeof localPath !== 'string' ) { 
         return this;
     }
+    localPath = path.normalize(localPath);
     //参数转换
     if ( argv.length === 2 && typeof mimeConf === 'function' ) {
         callback = mimeConf;
@@ -269,22 +280,29 @@ Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
         countConf = {total : 0 , success:0 , fail:0} , 
         files = [] , that = this;
     Promise.all([traverseAllFiles(localPath),createFolder(that.bucket , that.root)]).then(function(values){
+        log('[Main   ] starting...\n');
+        log('----------------------------------------\n');
+        log('[Main   ] uploading: '+localPath +' -> '+that.root +'\n');
+        log('----------------------------------------\n');
         if ( values[0].length > 0 ) {
             files = values[0];
             countConf.total = files.length;
-            Log('[Main ] use strict mode : ' + that.strict+'\n');
+            log('[Main   ] use strict mode : ' + that.strict+'\n');
             return traverse(params , that , [].concat(values[0]) , countConf);
         }else{
-            Log('[Main ] local folder is empty.\n');
+            log('[Main   ] local folder is empty.\n');
             return Promise.resolve(countConf);
         }
     }).then(function(count){
-        Log('[Main ] total:' + count.total + ' success: ' + count.success +' fail: '+count.fail+'\n');
+        log('----------------------------------------\n');
+        log(' total:' + count.total + '\n success: ' + count.success +'\n fail: '+count.fail+'\n');
+        log('----------------------------------------\n');
+        log('[Main   ] uploaded.\n');
         return callback(void 0 , {code:0 , files : files , localPath : localPath , remotePath:that.root , bucket : that.bucket , count:count});
     },callback);
 
     return this;
 };
 //默认关闭浏览器日志打印
-Cossync.setWindowsLog(false);
+Cossync.setBrowserLog(false);
 module.exports = Cossync;

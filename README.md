@@ -83,7 +83,7 @@ npm install --save cossync
 ## Cossync
 文件上传对象
 
-### Cossync.setWindowsLog(false|true)
+### Cossync.setBrowserLog(false|true)
 默认关闭浏览器日志打印.
 
 ## CMD使用模式
@@ -118,7 +118,7 @@ cossync conf.json
 
 ## 历史
 
-### 2.0.0 2016-12-30
+### 1.3.0 2016-12-30
 
 - 增加上传进度
 - 增加连接超时设置
