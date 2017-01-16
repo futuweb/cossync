@@ -20,19 +20,19 @@ npm install --save cossync
 
 ```json
 {
-    `appId`:`100012345`,
-    `secretId`:`ABCDABCDABCDABCDABCDABCD`,
-    `secretKey`:`abcdabcdabcd`,
-    `expired`:1800,
-    `bucket`:`bucketName`,
-    `remotePath`:`/test/`,
-    `localPath`:`./`,
-    `maxAge`:31536000,
-    `strict`:true ,
-    `timeout`:30,
-    `mime`:{
-        `default`: true,
-        `.test`: `text/plain`
+    "appId":"100012345",
+    "secretId":"ABCDABCDABCDABCDABCDABCD",
+    "secretKey":"abcdabcdabcd",
+    "expired":1800,
+    "bucket":"bucketName",
+    "remotePath":"/test/",
+    "localPath":"./",
+    "maxAge":31536000,
+    "strict":true ,
+    "timeout":30,
+    "mime":{
+        "default": true,
+        ".test": "text/plain"
     }
 }
 ```
@@ -119,7 +119,7 @@ cossync conf.json
 实例：
 
 ```javascript
-cos.sync('E:/source/2016_11/4/demo/' , {`default`: true` ,.test`: `text/plain`} , 60 , function(err , result){
+cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} , 60 , function(err , result){
     console.log(err , result);
 });
 ```
