@@ -14,106 +14,114 @@ require:
 npm install --save cossync
 ```
 
-## 配置
+## CLI配置
 
 准备一个配置文件，例如`conf.json`：
 
 ```json
 {
-    "appId":"100012345",
-    "secretId":"ABCDABCDABCDABCDABCDABCD",
-    "secretKey":"abcdabcdabcd",
-    "expired":1800,
-    "bucket":"bucketName",
-    "remotePath":"/test/",
-    "localPath":"./",
-    "maxAge":31536000,
-    "strict":true , 
-    "timeout":30,
-    "mime":{
-        "default": true,
-        ".test": "text/plain"
+    `appId`:`100012345`,
+    `secretId`:`ABCDABCDABCDABCDABCDABCD`,
+    `secretKey`:`abcdabcdabcd`,
+    `expired`:1800,
+    `bucket`:`bucketName`,
+    `remotePath`:`/test/`,
+    `localPath`:`./`,
+    `maxAge`:31536000,
+    `strict`:true ,
+    `timeout`:30,
+    `mime`:{
+        `default`: true,
+        `.test`: `text/plain`
     }
 }
 ```
 
-## params
+配置项说明：
 
-* `remotePath` 为COS存储根目录，
-* `expired`  密钥有效期
-* `strict` 单个文件报错是否停止上传 true or false  default : true
-* `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中。仅`cmd`模式有效。
-* `remotePath` 腾讯cos目录 , 以`/`开头和结尾 。例如：`/test/`.
-* `maxAge` 会设置`cache-control`头为指定的`max-age`值。
-* `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME。
-* `timeout` 连接超时时间 s
-* `progress` 查看上传进度函数，可自己配置，挂载在`Cossync`实例上。
+* `bucket` COS bucket名称
+* `expired` 密钥有效期，单位s
+* `strict` 单个文件出错是否停止上传，默认值`true`
+* `localPath` 为本地要同步的文件的根目录。`localPath`中的内容将被一一同步到`remotePath`中
+* `remotePath` 腾讯COS存储根目录，以`/`开头和结尾 。例如：`/test/`。目前只支持一级
+* `maxAge` 设置`cache-control`头为指定的`max-age`值
+* `mime` 中的`default`表示是否让cossync模块根据后缀名解析MIME（使用`mime`模块），其它键值表示需要自定义MIME
+* `timeout` 连接超时时间，单位s
 
-##cos.sync(localPath [,mimeConf [,maxAge[,callback]]])
-上传文件对外接口。
-
-*  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 本地上传的文件目录 必须存在
-*  `mimeConf` [\<Object\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 后缀名 可选
-*  `maxAge` [\<Number\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number) 缓存有效期 可选
-*  `callback` [\<Function\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function) 回调函数 可选
-
-`callback(err,result)`，如果上传失败`result`参数为空，`err`为`Error`实例；成功，`err === undefined` ， `result`参数会返回相应的上传状态。
-
-`result`参数如下：
-
-```js
-   {   
-        code: 0,
-        files:
-        [ 'demo_001.html',
-          'demo_002.html',
-          'demo_003.html' 
-        ],
-        localPath: 'E:/source/2016_11/4/demo/',
-        remotePath: '/test/',
-        bucket: 'bug',
-        count: { 
-            total: 3, 
-            success: 3, 
-            fail: 0 
-        }
-   }
-```
-
-## Cossync
-文件上传对象
-
-### Cossync.setBrowserLog(false|true)
-默认关闭浏览器日志打印.
-
-## CMD使用模式
+## CLI使用
 
 ```sh
 cossync conf.json
 ```
 
-## require模式
+## 模块API
+
+### `Cossync(options)`
+
+构建函数，返回`Cossync`实例。
+
+参数：
+
+* `options`参数对象
+    * `appId` COS AppId
+    * `secretId` COS  secretId
+    * `secretKey` COS secretKey
+    * `expired` 密钥有效期，单位s
+    * `bucket` COS bucket名称
+    * `maxAge` 设置`cache-control`头为指定的`max-age`值
+    * `timeout` 连接超时时间，单位s
+    * `strict` 单个文件出错是否停止上传，默认值`true`
+    * `remotePath` 腾讯COS存储根目录，以`/`开头和结尾 。例如：`/test/`。目前只支持一级
+    * `progress` 上传进度回调函数
+
+`progress(data)`参数：
+
+* `data.success` 成功文件个数
+* `data.fail` 失败文件个数
+* `data.total` 总文件个数
+
+### Cossync.setBrowserLog(false|true)
+
+静态方法，浏览器环境中（如electron）是否开户浏览器日志输出。默认关闭。
+
+### Cossync#sync(localPath [,mimeConf [,maxAge[,callback]]])
+
+实例方法，上传文件接口。
+
+*  `localPath` [\<String\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String) 本地上传的文件目录 必须存在
+*  `mimeConf` [\<Object\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object) 后缀名，见CLI配置项解释 可选
+*  `maxAge` [\<Number\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Number) 缓存有效期 可选
+*  `callback` [\<Function\>](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function) 上传结束回调函数 可选
+
+`callback(err, result)`，如果上传失败`result`参数为空，`err`为`Error`实例；成功，`err === undefined` ， `result`参数会返回相应的上传状态。
+
+`result`参数如下：
 
 ```js
- 'use strict';
+{
+    code: 0,
+    files:
+    [ 'demo_001.html',
+      'demo_002.html',
+      'demo_003.html'
+    ],
+    localPath: 'E:/source/2016_11/4/demo/',
+    remotePath: '/test/',
+    bucket: 'bug',
+    count: {
+        total: 3,
+        success: 3,
+        fail: 0
+    }
+}
+```
 
- var Cossync = require('cossync');
+实例：
 
- var cos = new Cossync({
-     "appId":"100012345",
-    "secretId":"ABCDABCDABCDABCDABCDABCD",
-    "secretKey":"abcdabcdabcd",
-    "expired":1800,
-    "bucket":"bug",
-    "maxAge":60,
-    "timeout":100,
-    "strict":true,
-    "remotePath":"/test/",
-    "progress" : function(countConf){} 
- });
- cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} , 60 , function(err , result){
+```javascript
+cos.sync('E:/source/2016_11/4/demo/' , {`default`: true` ,.test`: `text/plain`} , 60 , function(err , result){
     console.log(err , result);
- });
+});
 ```
 
 ## 历史
