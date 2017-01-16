@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TooBug/cossync.git"
+    "url": "git+https://github.com/futuweb/cossync.git"
   },
   "keywords": [
     "qcloud",
@@ -24,9 +24,9 @@
   "author": "TooBug",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/TooBug/cossync/issues"
+    "url": "https://github.com/futuweb/cossync/issues"
   },
-  "homepage": "https://github.com/TooBug/cossync#readme",
+  "homepage": "https://github.com/futuweb/cossync#readme",
   "dependencies": {
     "glob": "^7.0.6",
     "mime": "^1.3.4",
