@@ -252,7 +252,12 @@ function traverse(params , that , files , countConf){
  * @return {[this]}            [description]
  */
 Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
-    var argv = Array.prototype.slice.call(arguments) , empty = function(){};
+    var argv = Array.prototype.slice.call(arguments) , 
+        defaultCallBack = function(err){
+            if (err) { 
+                return log(err);
+            }
+        };
     if ( typeof localPath !== 'string' ) { 
         return this;
     }
@@ -273,7 +278,7 @@ Cossync.prototype.sync = function(localPath, mimeConf, maxAge, callback){
         maxAge = this.maxAge;
     }
     if ( typeof callback !== 'function' ) {
-        callback = empty;
+        callback = defaultCallBack;
     }
 
     var params = {localPath:localPath , mimeConf:mimeConf , maxAge:maxAge} , 
