@@ -194,8 +194,8 @@ function updateFile(bucket , remotePath , mimeConf , maxAge){
  * @return {[Promise]} [description]
  */
 function getFilePathStats(pt){
-    return new Promise((resolve , reject)=>{
-        fs.stat(path.normalize(pt) , (err , stats)=>{
+    return new Promise(function(resolve , reject){
+        fs.stat(path.normalize(pt) , function(err , stats){
             if ( err ) return reject(createError('[status ] fs.stat() get path status failed. path:' + pt +'\n'));
             return resolve(stats);
         });
