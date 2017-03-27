@@ -126,6 +126,11 @@ cos.sync('E:/source/2016_11/4/demo/' , {"default": true" ,.test": "text/plain"} 
 
 ## 历史
 
+### 1.3.1 2017-03-27
+
+- 优化callback回调
+- 修改=>箭头函数为`function`
+
 ### 1.3.0 2017-01-16
 
 - 增加上传进度
