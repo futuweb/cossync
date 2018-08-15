@@ -3,58 +3,44 @@
 'use strict';
 
 var path = require('path');
-// var fs = require('fs');
-var confPath = process.argv[2];
-if(!confPath){
-	confPath = 'cossyncconf.json';
-}
-var localPath = path.join(process.cwd(), confPath);
-var tryPaths = [localPath, confPath];
-
-var conf;
-
-console.log('\n------------------- CosSync v'+require('../package.json').version+' --------------------');
-
-tryPaths.forEach(function(tryPath){
-
-	if(!conf){
-		try{
-			conf = require(tryPath);
-			console.log('[CLI    ] using config file: ' + tryPath);
-		}catch(e){
-
-		}
-	}
-
-});
-
-if(!conf){
-	console.log('[CLI    ] No conf file found. Please specify a conf file or make a `cossyncconf.json` in current directory.');
-	return;
-}
-
-var Cossync = require('../index');
-var cos = new Cossync(conf);
-
+var version = require('../package.json').version;
+var cossync = require('../index').cossync;
+var conf = require(path.join(process.cwd(), process.argv[2] || 'cossyncconf.json'));
+var cos = cossync(conf);
 var tryTimes = 3;
 
-var doSync = function(){
-	cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, function(err){
-		if(err){
-			console.log('[CLI    ] error!', err);
-			if(--tryTimes){
-				console.log('[CLI    ] ready to do #' + (3 - tryTimes) + ' retry afert 1s.');
-				setTimeout(doSync, 1000);
-			}else{
-				console.log('[CLI    ] Still error, abort!');
-				console.log('------------------- CosSync v'+require('../package.json').version+' --------------------\n\n');
-				process.exit(1);
-			}
-		}else{
-			console.log('[CLI    ] finished!');
-			console.log('------------------- CosSync v'+require('../package.json').version+' --------------------\n\n');
-		}
-	});
-};
+consloe.log('------------------------CosSync v' + version + '---------------------------');
 
-doSync();
+function callback(err , result){
+    consloe.log('[CI] <======== done.');
+    if ( err ){
+        consloe.log('[CI] is error ' + err);
+        if ( tryTimes > 0 ){
+            consloe.log('\n[CI] <===== will try agian. ' + tryTimes);
+            tryTimes --;
+            return runCos(result);
+        }
+        consloe.log('[CI] <======== has error.\n\n');
+        process.exit(1);
+    }
+    consloe.log('[CI] <======== all success.\n\n');
+    process.exit(0);
+}
+
+function runCos(result){
+    if ( cos.version === 'v5' ){
+        cos.upload(config.localPath , config.globConfig , callback)
+    }else {
+        cos.upload(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
+    }
+}
+
+consloe.log('[CI] =======> will run , please wait......');
+
+consloe.log('[CI] -------- ' + conf.localPath + ' ==> ' + config.remotePath);
+
+if ( cos.version === 'v5' ){
+    cos.sync(config.localPath , config.globConfig , callback)
+}else {
+    cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
+}

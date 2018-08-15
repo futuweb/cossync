@@ -1,6 +1,6 @@
 {
   "name": "cossync",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "sync files with qcloud COS (cloud storage)",
   "main": "index.js",
   "bin": {
@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/futuweb/cossync#readme",
   "dependencies": {
+    "cos-nodejs-sdk-v5": "^2.4.9",
     "glob": "^7.0.6",
     "mime": "^1.3.4",
     "qcloud_cos": "^1.0.5"
