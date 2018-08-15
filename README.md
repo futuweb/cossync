@@ -111,8 +111,11 @@ cossync conf.json
 ### Cossync#sync(localPath [,globConfig [,callback]])
 实例方法，收集上传文件并上传文件接口。
 
-### Cossync#sync(localPath , files)
+### Cossync#upload(localPath , files)
 上传文件接口。
+
+
+### V5 bucket 案例
 
 ```js
 var cossync = require('./../index.js').cossync;
@@ -203,7 +206,7 @@ cos.sync(conf.localPath , conf.globConfig , function(err , result){
 }
 ```
 
-实例：
+### V3 bucket 案例
 
 ```javascript
 var cossync = require('./../index.js').cossync;
