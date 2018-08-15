@@ -29,9 +29,9 @@ function callback(err , result){
 
 function runCos(result){
     if ( conf.version === 'v5' ){
-        cos.upload(conf.localPath , conf.globConfig , callback);
+        cos.sync(conf.localPath , conf.globConfig , callback);
     }else {
-        cos.upload(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
+        cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
     }
 }
 
