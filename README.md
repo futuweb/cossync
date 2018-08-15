@@ -230,7 +230,7 @@ var conf = {
 
 var cos = cossync(conf);
 
-cos.sync(conf.localPath , conf.mime , conf.maxAge , function(err , result){
+cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, function(err , result){
     console.log(err , result);
 });
 ```

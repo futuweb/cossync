@@ -16,8 +16,8 @@ function callback(err , result){
     if ( err ){
         consloe.log('[CI] is error ' + err);
         if ( tryTimes > 0 ){
-            consloe.log('\n[CI] <===== will try agian. ' + tryTimes);
             tryTimes --;
+            consloe.log('\n[CI] <===== will try agian. ' + tryTimes);
             return runCos(result);
         }
         consloe.log('[CI] <======== has error.\n\n');
@@ -29,7 +29,7 @@ function callback(err , result){
 
 function runCos(result){
     if ( cos.version === 'v5' ){
-        cos.upload(config.localPath , config.globConfig , callback)
+        cos.upload(conf.localPath , conf.globConfig , callback);
     }else {
         cos.upload(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
     }
@@ -37,10 +37,10 @@ function runCos(result){
 
 consloe.log('[CI] =======> will run , please wait......');
 
-consloe.log('[CI] -------- ' + conf.localPath + ' ==> ' + config.remotePath);
+consloe.log('[CI] -------- ' + conf.localPath + ' ==> ' + conf.remotePath);
 
 if ( cos.version === 'v5' ){
-    cos.sync(config.localPath , config.globConfig , callback)
+    cos.sync(conf.localPath , conf.globConfig , callback);
 }else {
     cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
 }

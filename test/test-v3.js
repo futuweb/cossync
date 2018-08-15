@@ -21,6 +21,6 @@ var conf = {
 
 var cos = cossync(conf);
 
-cos.sync(conf.localPath , function(err , result){
+cos.sync(conf.localPath , conf.mime , conf.maxAge , function(err , result){
 	console.log(err , result);
 });
