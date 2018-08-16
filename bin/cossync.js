@@ -18,7 +18,7 @@ function callback(err , result){
         if ( tryTimes > 0 ){
             tryTimes --;
             console.log('\n[CI] <===== will try agian. ' + tryTimes);
-            return runCos(result);
+            return runCos();
         }
         console.log('[CI] <======== has error.\n\n');
         process.exit(1);
@@ -27,7 +27,7 @@ function callback(err , result){
     process.exit(0);
 }
 
-function runCos(result){
+function runCos(){
     if ( conf.version === 'v5' ){
         cos.sync(conf.localPath , conf.globConfig , callback);
     }else {
@@ -39,8 +39,4 @@ console.log('[CI] =======> will run , please wait......');
 
 console.log('[CI] -------- ' + conf.localPath + ' ==> ' + conf.remotePath);
 
-if ( conf.version === 'v5' ){
-    cos.sync(conf.localPath , conf.globConfig , callback);
-}else {
-    cos.sync(conf.localPath, conf.mime, conf.maxAge || conf.cacheMaxAge || 0, callback);
-}
+runCos();
