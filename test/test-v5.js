@@ -1,14 +1,15 @@
 var cossync = require('./../index.js').cossync;
 
 var conf = {
-    secretId:'DGFDFGDFGDFGDF',
-    secretKey:'DFGDFGDFGDFGDFGDFDFGDFG',
-    bucket:'ertretretr-12500000',
+    secretId:'354dfgddffgdgdgw',
+    secretKey:'rtyrcfg4535',
+    bucket:'45435fdgfg-125000',
     strict:true,
     version:'v5',
     region:'na-ashburn',
     remotePath:'/test/',
-    localPath: '/data',
+    localPath: '/hexo',
+    maxAge:31536000,
     globConfig:{
       ignore:["node_modules/**"],
       nodir:true

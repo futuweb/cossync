@@ -50,6 +50,13 @@ npm install --save cossync
     "region":"na-ashburn",
     "remotePath":"/test/",
     "localPath": "./test",
+    "maxAge":31536000, //cache-control
+    "encoding":"", //content-ecode
+    "expires": 300, //content -expries
+    "mime":{  //content-type
+        "default": true,
+        ".test": "text/plain"
+    },
     "globConfig":{
       "ignore":["node_modules/**"],
       "nodir":true
@@ -118,7 +125,7 @@ cossync conf.json
 ### V5 bucket 案例
 
 ```js
-var cossync = require('./../index.js').cossync;
+var cossync = require('cossync').cossync;
 
 var conf = {
     secretId:'DGFDFGDFGDFGDF',
@@ -129,6 +136,13 @@ var conf = {
     region:'na-ashburn',
     remotePath:'/test/',
     localPath: '/data',
+    maxAge:31536000, //cache-control
+    encoding:"", //content-ecode
+    expires: 300, //content -expries
+    mime:{  //content-type
+        default: true,
+        ".test": "text/plain"
+    },
     globConfig:{
       ignore:["node_modules/**"],
       nodir:true
@@ -209,7 +223,7 @@ cos.sync(conf.localPath , conf.globConfig , function(err , result){
 ### V3 bucket 案例
 
 ```javascript
-var cossync = require('./../index.js').cossync;
+var cossync = require('cossync').cossync;
 
 var conf = {
     "appId":"100012345",
