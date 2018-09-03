@@ -51,7 +51,6 @@ npm install --save cossync
     "remotePath":"/test/",
     "localPath": "./test",
     "maxAge":31536000, //cache-control
-    "encoding":"", //content-ecode
     "expires": 300, //content -expries
     "mime":{  //content-type
         "default": true,
@@ -137,7 +136,6 @@ var conf = {
     remotePath:'/test/',
     localPath: '/data',
     maxAge:31536000, //cache-control
-    encoding:"", //content-ecode
     expires: 300, //content -expries
     mime:{  //content-type
         default: true,
