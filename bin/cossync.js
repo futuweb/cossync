@@ -14,7 +14,7 @@ console.log('------------------------CosSync v' + version + '-------------------
 function callback(err , result){
     console.log('[CI] <======== done.');
     if ( err ){
-        console.log('[CI] is error ' + err);
+        console.log('[CI] is error ' + JSON.stringify(err));
         if ( tryTimes > 0 ){
             tryTimes --;
             console.log('\n[CI] <===== will try agian. ' + tryTimes);
