@@ -253,6 +253,9 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 
 ## 历史
 
+### 1.4.3 2019-12-03
+- 上传失败时抛出详细异常
+
 ### 1.4.0 2018-08-15 
 
 - 支持V5 bucket
