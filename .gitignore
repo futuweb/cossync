@@ -2,3 +2,5 @@ node_modules
 .vscode
 package-lock.json
 .history
+yarn.lock
+.idea
