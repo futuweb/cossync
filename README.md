@@ -52,6 +52,7 @@ npm install --save cossync
     "localPath": "./test",
     "maxAge":31536000, //cache-control
     "expires": 300, //content -expries
+    "timeout": 120000, // 单个文件上传超时时间，单位为ms
     "mime":{  //content-type
         "default": true,
         ".test": "text/plain"
@@ -81,6 +82,7 @@ V5 BUCKET 特殊配置项说明：
 * `version` 指定使用的cos版本。 目前只有： `v3` 和 `v5`。
 * `region`  表示bucket的所属地域。
 * `globConfig`  参考[node-glob](https://github.com/isaacs/node-glob) 。 主要用于配置筛选上传文件。
+* `timeout` 连接超时时间，单位ms，默认为120000ms
 
 ## CLI使用
 如果没有指定使用的配置文件，将在`proccess.cwd()`目录下寻找`cossyncconf.json`文件。
@@ -104,6 +106,7 @@ cossync conf.json
     * `strict` 单个文件出错是否停止上传，默认值`true`
     * `remotePath` 腾讯COS存储根目录，以`/`开头和结尾 。例如：`/test/`。目前只支持一级
     * `progress` 上传进度回调函数
+    * `timeout` 单个文件超时时间，默认值`120000`ms
 
 
 `progress(data)`参数：
@@ -135,6 +138,7 @@ var conf = {
     region:'na-ashburn',
     remotePath:'/test/',
     localPath: '/data',
+    timeout: 120000, // 单个文件上传超时时间，单位毫秒，默认为2分钟
     maxAge:31536000, //cache-control
     expires: 300, //content -expries
     mime:{  //content-type
@@ -179,6 +183,7 @@ cos.sync(conf.localPath , conf.globConfig , function(err , result){
     * `strict` 单个文件出错是否停止上传，默认值`true`
     * `remotePath` 腾讯COS存储根目录，以`/`开头和结尾 。例如：`/test/`。目前只支持一级
     * `progress` 上传进度回调函数
+    * `timeout` 单个文件超时时间，单位毫秒，默认为120000ms（2分钟）
 
 `progress(data)`参数：
 
@@ -252,6 +257,9 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 静态方法，浏览器环境中（如electron）是否开户浏览器日志输出。默认关闭。
 
 ## 历史
+
+### 1.5.0 2020-02-27
+- V5 bucket支持timeout参数，默认为120000ms
 
 ### 1.4.3 2019-12-03
 - 上传失败时抛出详细异常
