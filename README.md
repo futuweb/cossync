@@ -258,16 +258,23 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 
 ## 历史
 
+### 1.5.2 2021-01-04
+
+- 去除调试日志
+
 ### 1.5.1 2020-05-20
+
 - 修复v5版本log出的速度为NaN的问题，上传数据精确到KB/s
 
 ### 1.5.0 2020-02-27
+
 - V5 bucket支持timeout参数，默认为120000ms
 
 ### 1.4.3 2019-12-03
+
 - 上传失败时抛出详细异常
 
-### 1.4.0 2018-08-15 
+### 1.4.0 2018-08-15
 
 - 支持V5 bucket
 - 兼容旧版v3 bucket
