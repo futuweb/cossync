@@ -258,6 +258,9 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 
 ## 历史
 
+### 1.5.3 2023-08-08
+- 修复V5上传文件名含中文失败的问题
+
 ### 1.5.2 2021-01-04
 
 - 去除调试日志
