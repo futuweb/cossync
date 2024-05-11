@@ -107,6 +107,7 @@ cossync conf.json
     * `remotePath` 腾讯COS存储根目录，以`/`开头和结尾 。例如：`/test/`。目前只支持一级
     * `progress` 上传进度回调函数
     * `timeout` 单个文件超时时间，默认值`120000`ms
+    * `skipWhenExist` v5版支持，默认为false上传所有文件，值为出true跳过已上传的文件
 
 
 `progress(data)`参数：
@@ -134,6 +135,7 @@ var conf = {
     secretKey:'DFGDFGDFGDFGDFGDFDFGDFG',
     bucket:'ertretretr-12500000',
     strict:true,
+    skipWhenExist:true,
     version:'v5',
     region:'na-ashburn',
     remotePath:'/test/',
@@ -257,6 +259,9 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 静态方法，浏览器环境中（如electron）是否开户浏览器日志输出。默认关闭。
 
 ## 历史
+
+### 1.6.0 2024-05-11
+- v5支持skipWhenExist参数，默认为false上传所有文件，值为出true跳过已上传的文件。
 
 ### 1.5.3 2023-08-08
 - 修复V5上传文件名含中文失败的问题
