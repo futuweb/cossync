@@ -260,6 +260,9 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 
 ## 历史
 
+### 1.7.0 2024-07-24
+- v5支持UseAccelerate参数，控制是否支持开启加速域名，默认为false则不开启，true则开启加速域名
+
 ### 1.6.0 2024-05-11
 - v5支持skipWhenExist参数，默认值为false则上传所有文件，值为true则跳过已上传的文件。
 
