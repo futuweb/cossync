@@ -31,7 +31,7 @@
     "cos-nodejs-sdk-v5": "^2.4.9",
     "glob": "^7.0.6",
     "mime": "^1.3.4",
-    "p-retry": "^6.2.0",
-    "qcloud_cos": "^1.0.5"
+    "qcloud_cos": "^1.0.5",
+    "retry": "^0.13.1"
   }
 }
