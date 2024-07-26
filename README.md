@@ -261,7 +261,7 @@ cos.sync(conf.localPath conf.mime, conf.maxAge || conf.cacheMaxAge || 0, functio
 ## 历史
 
 ### 1.8.0 2024-07-26
-- v5支持retryConfig参数，控制请求失败是否开启重试。对象参数包括`maxAttempts`控制重试最大次数；`interval`控制重试请求间隔单位是毫秒；`cosConfig`控制请求的cos实例对象配置参数，这里仅需控制是否启用全球加速域名即可，其他参数跟随cos对象初始化参数。配置示例
+- v5支持retryConfig参数，控制请求失败是否开启重试。对象参数包括`maxAttempts`控制重试最大次数；`interval`控制重试请求间隔，单位是毫秒；`cosConfig`控制请求的cos实例对象配置参数，这里仅需控制是否启用全球加速域名即可，其他参数跟随cos对象初始化参数。配置示例
 `'retryConfig': {
     'maxAttempts': 3,
     'interval': 1000,
